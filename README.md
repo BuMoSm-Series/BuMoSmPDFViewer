@@ -3,13 +3,15 @@
 A simple PDF viewer for Windows.  
 Built with [GPUI](https://github.com/zed-industries/zed/tree/main/crates/gpui) — GPU-accelerated rendering keeps CPU usage low, and falls back gracefully on systems without a dedicated GPU.
 
+**BuMoSm** stands for **Bu**ttery **Mo**tion **Sm**ooth — silky-smooth scrolling that feels as fluid as butter.
+
 ---
 
 ## Features
 
 - Continuous scroll and single-page display modes
 - Single-page and two-page spread layouts
-- Zoom in/out with fit-to-width, fit-to-page, and actual size modes
+- Zoom in/out with fit-to-width, fit-to-page, and actual size modes, gathered into one toolbar control
 - Page rotation (clockwise and counter-clockwise)
 - Text search with match-case and whole-word options (Ctrl+F)
 - Text selection and copy via Ctrl+C or right-click context menu
@@ -24,6 +26,9 @@ Built with [GPUI](https://github.com/zed-industries/zed/tree/main/crates/gpui) �
 - Multi-tab support — open multiple PDFs in separate tabs
 - Register as the default PDF app from the settings screen
 - Adjustable scroll speed and acceleration
+- Per-document search history
+- Per-document bookmarks — name and save page positions
+- A "read up to here" marker — one per document, set and jumped to with a single key
 
 ## Built With
 
@@ -47,8 +52,9 @@ Built with [GPUI](https://github.com/zed-industries/zed/tree/main/crates/gpui) �
 
 ### Viewing
 
-| Action | Operation |
+| Action | Shortcut |
 |---|---|
+| Open file | Ctrl+O |
 | Zoom in / out | Ctrl+= / Ctrl+- |
 | Fit to width | Ctrl+1 |
 | Fit to page | Ctrl+2 |
@@ -57,9 +63,46 @@ Built with [GPUI](https://github.com/zed-industries/zed/tree/main/crates/gpui) �
 | Rotate counter-clockwise | Ctrl+Shift+- |
 | First page | Home |
 | Last page | End |
-| Toggle outline | F4 |
+| Previous view | Alt+Left |
+| Next view | Alt+Right |
+| Toggle outline panel | F4 |
+| Add or remove a bookmark | Ctrl+B |
+| Mark the page as read up to here | Ctrl+R |
+| Go to where you left off | Ctrl+J |
+| Toggle bookmark panel | F5 |
+| Toggle thumbnail panel | F6 |
 | Toggle fullscreen | F11 |
+| Show recent files | Ctrl+H |
+| Switch between continuous and single page | Ctrl+M |
+| Switch page layout | Ctrl+L |
+| Search | Ctrl+F |
+| Next match | F3 |
+| Previous match | Shift+F3 |
 | Jump to page number field | Ctrl+G |
+| Open the zoom popup | Ctrl+E |
+| Open the keyboard shortcut list | F1 |
+| Previous page | Ctrl+PageUp |
+| Next page | Ctrl+PageDown |
+| Earlier pages list | Ctrl+Home |
+| Later pages list | Ctrl+End |
+| Search history | Alt+↓ |
+| Toggle search results panel | Alt+L |
+| Toggle match case | Alt+C |
+| Toggle whole word | Alt+W |
+| Switch to next tab | Ctrl+Tab |
+| Switch to previous tab | Ctrl+Shift+Tab |
+| Close tab | Ctrl+W |
+| Open settings | Ctrl+, |
+
+### Zoom
+
+Zoom is gathered into a single button on the toolbar, showing the current state. The popup holds a magnification field above the three fit modes.
+
+- **Ctrl+E**, or clicking the button, opens it with the current mode already selected
+- Up and down cycle through the magnification field and the three modes; **Enter** applies, **Esc** closes without changing anything
+- **Ctrl+0**, **Ctrl+1** and **Ctrl+2** still switch modes directly, without opening the popup
+
+The button shows the mode name while a fit mode is active, and the magnification otherwise. Note that typing 100 gives you actual size, so the button will read **Actual** rather than **100%** — the two mean the same thing. Likewise, typing a figure while **Width** is active replaces it, because the page can no longer follow the window.
 
 ### Search
 
@@ -67,17 +110,51 @@ Press **Ctrl+F** to open the search bar. Type to search, then press **F3** to ju
 
 Available options: **Match case** and **Match whole word**.
 
+The search starts from the page you are on and spreads outwards in both directions, so nearby matches are found first. The result list in the sidebar is always ordered by page.
+
+The result list is not shown while the search is still running — it appears all at once when the scan is complete. The status counter in the search bar updates during the scan so you can see progress.
+
+You do not need to press Enter to search. Pressing **F3**, **Shift+F3**, or any of the option buttons starts the search immediately if one is not already running.
+
+**Search history**
+
+The button beside the input field lists the terms you have searched for in this document. Selecting one runs the search again straight away.
+
+The history is kept per document and stored in `config.json`, so it survives a restart. Use the × on a row to drop a single term, or **Clear all** at the bottom of the list to drop them all. The number of terms kept is configurable in the settings (1–100, default 20).
+
 ### Text selection and copy
 
 Click and drag on a page to select text. The selection can extend beyond the visible area — drag the cursor outside the page to scroll automatically.
 
 - **Ctrl+A** — select all text on the current page
 - **Ctrl+C** — copy the selected text
-- **Right-click** — opens a context menu with "Copy"
+- **Right-click** — opens a context menu with "Copy" and bookmark options
 
 ### Password-protected PDFs
 
 When you open a password-protected PDF, a dialog appears prompting you to enter the password.
+
+### Bookmarks
+
+Right-click on a page and select **Add bookmark** to save the current page with a name. Bookmarked pages appear in the **Bookmarks** panel in the sidebar.
+
+- Click a bookmark to jump to that page
+- Click the pencil button on a row to rename it
+- Click the × button to remove a single bookmark
+- Right-click a bookmarked page and select **Remove bookmark** to remove it
+- Use **Clear all** at the bottom of the panel to remove all bookmarks
+
+Bookmarks are stored per document in `config.json`.
+
+### Where you left off
+
+Separate from bookmarks, each document can hold a single "read up to here" marker. It takes no name, so setting it is one key away.
+
+- **Ctrl+R**, or **Read up to here** in the right-click menu, records the current page. Setting it again simply moves it — there is nothing to confirm or clean up
+- **Ctrl+J**, or the button in the toolbar, goes back to it
+- It also sits at the top of the **Bookmarks** panel, above a dividing line, so it can be reached the same way as a bookmark
+
+The name is fixed, so it cannot be renamed. You are free to use "Read up to here" as a bookmark name yourself — the two are stored separately and will not collide.
 
 ### Recent files
 
@@ -98,11 +175,12 @@ Click **Settings** to open the settings panel.
 | Cover page | Show the first page alone or paired from the start |
 | Binding | Left-bound or right-bound (affects spread order) |
 | Initial zoom | Default zoom level when opening a PDF |
-| Number of recent files | How many files to keep in the history (1–100) |
-| Open at the last page | Resume from where you left off |
+| File history count | How many files to keep in the history (1–100) |
+| Search history count | How many search terms to keep per document (1–100) |
+| Opening page | Start from the first page, or resume from the last viewed page |
 | Scroll speed | How fast one wheel notch scrolls (see [Scrolling](#scrolling)) |
 | Scroll acceleration | How sharply the movement speeds up and slows down (see [Scrolling](#scrolling)) |
-| Lower the frame rate on battery | Caps the frame rate at 30 FPS while running on battery |
+| On battery | Choose whether to cap the frame rate at 30 FPS while on battery |
 | Set as default PDF app | Opens the Windows default apps settings page for this application |
 
 ### Scrolling
@@ -164,6 +242,8 @@ Themes in the second group are plain JSON files. Editing one takes effect immedi
 
 Settings are saved automatically to `config.json` in the same folder as the executable. The window position, size, maximized state and the monitor in use are stored in the same file. You can copy or back up this file to preserve your configuration.
 
+Paths under your user folder are written as `%USERPROFILE%\...` rather than in full, so the file does not carry your logon name. They are expanded again when the file is read, which also means the same file works on a machine with a different user name.
+
 ### Language
 
 The display language can be changed in the settings panel. Currently supported: **English** and **Japanese**.
@@ -203,13 +283,15 @@ If you find a bug or have a question, please open an [Issue](https://github.com/
 Windows向けのシンプルなPDFビューアです。  
 [GPUI](https://github.com/zed-industries/zed/tree/main/crates/gpui) によるGPU描画でCPU負荷を低減します。GPU未搭載の環境でもCPU描画にフォールバックして動作します。
 
+**BuMoSm** は **Bu**ttery **Mo**tion **Sm**ooth の略で、「バターのように滑らかな動き」を意味します。
+
 ---
 
 ## 機能
 
 - 連続スクロール表示・単一ページ表示の切り替え
 - 1ページ表示・見開き表示の切り替え
-- ズームイン・アウト（幅に合わせる・ページ全体・等倍）
+- ズームイン・アウト（幅に合わせる・ページ全体・等倍）— ツールバーの1か所にまとめてあります
 - ページの回転（時計回り・反時計回り）
 - テキスト検索（大文字小文字区別・単語一致オプション付き、Ctrl+F）
 - テキスト選択とコピー（Ctrl+C・右クリックメニュー）
@@ -224,6 +306,9 @@ Windows向けのシンプルなPDFビューアです。
 - マルチタブ対応 — 複数のPDFを別々のタブで開ける
 - 設定画面から既定のPDFアプリとして登録可能
 - スクロールの速度と加減速度を調整可能
+- 文書ごとの検索履歴
+- 文書ごとのブックマーク — ページに名前を付けて登録できます
+- 「ここまで読んだ」の記録 — 文書につき1つ。キー1つで記録し、キー1つで戻れます
 
 ## 開発言語・フレームワーク
 
@@ -247,8 +332,9 @@ Windows向けのシンプルなPDFビューアです。
 
 ### 表示操作
 
-| 操作 | キー |
+| 操作 | ショートカット |
 |---|---|
+| ファイルを開く | Ctrl+O |
 | ズームイン・アウト | Ctrl+= / Ctrl+- |
 | 幅に合わせる | Ctrl+1 |
 | ページ全体 | Ctrl+2 |
@@ -257,9 +343,46 @@ Windows向けのシンプルなPDFビューアです。
 | 反時計回りに回転 | Ctrl+Shift+- |
 | 先頭ページ | Home |
 | 末尾ページ | End |
-| 目次の表示切り替え | F4 |
+| 前の表示へ | Alt+Left |
+| 次の表示へ | Alt+Right |
+| 目次パネルの開閉 | F4 |
+| ブックマークの追加・解除 | Ctrl+B |
+| ここまで読んだと記録する | Ctrl+R |
+| ここまで読んだページへ移る | Ctrl+J |
+| ブックマークパネルの開閉 | F5 |
+| サムネイルパネルの開閉 | F6 |
 | 全画面表示の切り替え | F11 |
+| 表示履歴を出す | Ctrl+H |
+| 連続・単ページ表示の切り替え | Ctrl+M |
+| ページの並べ方を切り替える | Ctrl+L |
+| 検索 | Ctrl+F |
+| 次の一致へ | F3 |
+| 前の一致へ | Shift+F3 |
 | ページ番号入力欄へ移動 | Ctrl+G |
+| 倍率のポップアップを開く | Ctrl+E |
+| キーの一覧を開く | F1 |
+| 前のページ | Ctrl+PageUp |
+| 次のページ | Ctrl+PageDown |
+| 前側のページリスト | Ctrl+Home |
+| 後ろ側のページリスト | Ctrl+End |
+| 検索履歴 | Alt+↓ |
+| 検索結果パネルの開閉 | Alt+L |
+| 大文字小文字を区別の切り替え | Alt+C |
+| 単語単位の切り替え | Alt+W |
+| 次のタブへ切り替え | Ctrl+Tab |
+| 前のタブへ切り替え | Ctrl+Shift+Tab |
+| タブを閉じる | Ctrl+W |
+| 設定を開く | Ctrl+, |
+
+### 倍率
+
+倍率の操作はツールバーの1つのボタンにまとめてあり、ボタンにはいまの状態が出ます。ポップアップには倍率の入力欄と、その下に3つのモードが並びます。
+
+- **Ctrl+E**、またはボタンを押すと開きます。いまのモードが選ばれた状態です
+- 上下キーで入力欄と3つのモードを巡回します。**Enter** で確定、**Esc** は何も変えずに閉じます
+- **Ctrl+0**・**Ctrl+1**・**Ctrl+2** はポップアップを開かずに直接切り替えます
+
+ボタンの文字は、3つのモードのいずれかなら「等倍」「幅」「全体」、そうでなければ倍率です。100と入れると等倍そのものなので、ボタンは「100%」ではなく「等倍」になります。同じ状態を指しているためです。また「幅」の状態で数値を入れると表示が変わりますが、これはウィンドウに追従しなくなったためで、意図した動きです。
 
 ### テキスト検索
 
@@ -267,17 +390,51 @@ Windows向けのシンプルなPDFビューアです。
 
 オプション：**大文字小文字を区別する**・**単語として一致するものだけを探す**
 
+検索はいま見ているページを起点に前後へ広がるので、近くの一致から先に見つかります。サイドバーの結果一覧は常にページ順です。
+
+走査が完了するまで結果一覧は表示されません。完了すると一度に出ます。走査中は検索バーの件数表示が更新され続けるので、進行状況を確認できます。
+
+Enterキーを押さなくても検索は始まります。**F3**・**Shift+F3**・オプションボタンのいずれかを押すと、まだ検索していなければその時点で開始します。
+
+**検索履歴**
+
+入力欄の隣のボタンで、その文書で検索した語の一覧が出ます。選ぶとその場で検索し直します。
+
+履歴は文書ごとに `config.json` へ保存されるので、再起動しても残ります。行の × で1件ずつ、一覧の下の**すべて消す**でまとめて消せます。残す件数は設定で変更できます（1〜100件、既定は20件）。
+
 ### テキストの選択とコピー
 
 ページ上でドラッグしてテキストを選択できます。マウスカーソルをページ外へ動かすと自動でスクロールするため、画面に見えていない範囲まで続けて選択できます。
 
 - **Ctrl+A** — 現在のページの全テキストを選択
 - **Ctrl+C** — 選択したテキストをコピー
-- **右クリック** — 「コピー」のコンテキストメニューを表示
+- **右クリック** — 「コピー」とブックマーク操作のコンテキストメニューを表示
 
 ### パスワード付きPDF
 
 パスワードで保護されたPDFを開くと、パスワードの入力ダイアログが表示されます。
+
+### ブックマーク
+
+ページを右クリックして「ブックマークに追加」を選ぶと、そのページに名前を付けて登録できます。登録したページはサイドバーの**ブックマーク**パネルに一覧表示されます。
+
+- 一覧の項目をクリックするとそのページへ移動します
+- 鉛筆ボタンで名前を変更できます
+- × ボタンで1件ずつ削除できます
+- ブックマーク済みのページを右クリックして「ブックマークを解除」でも削除できます
+- 一覧の下の**すべて消す**で全件削除できます
+
+ブックマークは文書ごとに `config.json` に保存されます。
+
+### ここまで読んだ
+
+ブックマークとは別に、文書につき1つだけ「ここまで読んだ」を記録できます。名前を付けないぶん、キー1つで済みます。
+
+- **Ctrl+R**、または右クリックメニューの「ここまで読んだ」で、いま見ているページを記録します。改めて記録すると位置が移るだけなので、確認も後片付けも要りません
+- **Ctrl+J**、またはツールバーのボタンでそのページへ戻れます
+- **ブックマーク**パネルの先頭にも区切り線付きで並ぶので、ブックマークと同じように辿れます
+
+名前は決まっているので変更できません。「ここまで読んだ」という名前でブックマークを作ることもできます。別々に持っているので、名前がぶつかることはありません。
 
 ### 表示履歴
 
@@ -298,11 +455,12 @@ Windows向けのシンプルなPDFビューアです。
 | 見開きの表紙 | 1ページ目を単独で表示するか2ページずつ並べるか |
 | 綴じ方向 | 左綴じまたは右綴じ（見開きの順序に影響） |
 | 初期倍率 | PDFを開いたときの既定のズーム |
-| 履歴に残す件数 | 履歴に保持するファイル数（1〜100件） |
-| 前回のページから開く | 前回見ていたページから再開する |
+| ファイル表示履歴数 | 履歴に保持するファイル数（1〜100件） |
+| 検索履歴数 | 1つの文書で保持する検索語の数（1〜100件） |
+| 開くページ | 先頭ページから、または前回見ていたページから開く |
 | スクロール速度 | ホイール1ノッチ分の移動の速さ（[スクロール](#スクロール)を参照） |
 | スクロール加減速度 | 動き出しと止まりぎわの鋭さ（[スクロール](#スクロール)を参照） |
-| バッテリー動作時はFPSを下げる | バッテリー動作中はフレームレートを30FPSに制限する |
+| バッテリー動作時 | バッテリー動作中にフレームレートを30FPSに制限するか選べる |
 | 既定のPDFアプリに設定する | Windowsの既定アプリ設定画面をこのアプリのページで開く |
 
 ### スクロール
@@ -363,6 +521,8 @@ Windowsの仕様上、アプリが自分で既定を切り替えることはで�
 ### 設定ファイル
 
 設定は実行ファイルと同じフォルダの `config.json` に自動保存されます。ウィンドウの位置・サイズ・最大化状態・表示していたモニターも同じファイルに保存されます。このファイルをコピーまたはバックアップすることで設定を保持できます。
+
+履歴のパスのうちユーザーフォルダの下にあるものは、フルパスではなく `%USERPROFILE%\...` の形で書かれます。ログオン名がファイルに残らないようにするためです。読み込むときに元へ戻すので、ユーザー名の違う環境へ持っていっても同じように使えます。
 
 ### 言語設定
 
