@@ -9,9 +9,11 @@ Built with [GPUI](https://github.com/zed-industries/zed/tree/main/crates/gpui) �
 
 ## Features
 
+### v1.0.0
+
 - Continuous scroll and single-page display modes
 - Single-page and two-page spread layouts
-- Zoom in/out with fit-to-width, fit-to-page, and actual size modes, gathered into one toolbar control
+- Zoom in/out with fit-to-width, fit-to-page, and actual size modes
 - Page rotation (clockwise and counter-clockwise)
 - Text search with match-case and whole-word options (Ctrl+F)
 - Text selection and copy via Ctrl+C or right-click context menu
@@ -26,9 +28,25 @@ Built with [GPUI](https://github.com/zed-industries/zed/tree/main/crates/gpui) �
 - Multi-tab support — open multiple PDFs in separate tabs
 - Register as the default PDF app from the settings screen
 - Adjustable scroll speed and acceleration
+- Zoom with Ctrl + mouse wheel, centered on the cursor
+- Follow links inside a PDF — page links jump to the target; web links open in the browser after a confirmation
+- Status bar showing the document's title, author, creation date, page count, file size and PDF version, plus the chapter you are reading
+
+### v1.1.0
+
+- Zoom popup — fit-to-width, fit-to-page, actual size and a numeric field gathered into one toolbar control
 - Per-document search history
 - Per-document bookmarks — name and save page positions
 - A "read up to here" marker — one per document, set and jumped to with a single key
+
+### v1.2.0
+
+- Invert page colors for reading in the dark (Ctrl+I) — not remembered between launches. The strength (60–100%) is set in Settings with a slider, available while inversion is on; the page behind the panel shows the result as you move it
+- Reorder tabs by dragging them
+- Regular-expression search (Alt+R) — a button in the search bar treats the text you type as a regular expression
+- Page editing (Ctrl+E, or the button next to Print) — shows the pages of the open PDF as thumbnails. Select pages (click, Shift+click for a range, Ctrl+click for several) and extract them, delete them, insert another PDF before or after them, or combine PDFs; PDF files can also be dropped onto the window to insert them between the nearest pages. Edits only change the working list (with undo and redo) until you save; save as a new file, or over the open file (the original can be kept as "name.bak.pdf" — see the Settings). Saved files keep each page's content but not the table of contents, page labels or document properties. Not available for password-protected PDFs or PDFs whose author has not allowed editing
+- Print with a built-in print screen (Ctrl+P) — settings on the left, a scrollable preview on the right that shows each page on the paper exactly where it will be printed. Choose the printer, copies and pages ("1-3, 5"); paper, orientation, color and two-sided printing are set in the printer's own Preferences window and remembered per printer. Each page is fitted to the paper, a page you rotated stays rotated, and colors are never inverted on paper. Printers that accept PostScript (for example CubePDF) receive the page with its fonts, so printing to them keeps the text selectable and searchable; with "Microsoft Print to PDF" the text becomes outlines, as with Acrobat
+- Notice when the open file is changed by another program — reload with one click or Ctrl+Shift+R; your page, zoom, rotation and color inversion are kept
 
 ## Built With
 
@@ -55,12 +73,16 @@ Built with [GPUI](https://github.com/zed-industries/zed/tree/main/crates/gpui) �
 | Action | Shortcut |
 |---|---|
 | Open file | Ctrl+O |
+| Print | Ctrl+P |
+| Edit pages | Ctrl+E |
+| Reload the file | Ctrl+Shift+R |
 | Zoom in / out | Ctrl+= / Ctrl+- |
 | Fit to width | Ctrl+1 |
 | Fit to page | Ctrl+2 |
 | Actual size | Ctrl+0 |
 | Rotate clockwise | Ctrl+Shift++ |
 | Rotate counter-clockwise | Ctrl+Shift+- |
+| Invert page colors | Ctrl+I |
 | First page | Home |
 | Last page | End |
 | Previous view | Alt+Left |
@@ -79,16 +101,15 @@ Built with [GPUI](https://github.com/zed-industries/zed/tree/main/crates/gpui) �
 | Next match | F3 |
 | Previous match | Shift+F3 |
 | Jump to page number field | Ctrl+G |
-| Open the zoom popup | Ctrl+E |
+| Open the zoom popup | Ctrl+Q |
 | Open the keyboard shortcut list | F1 |
 | Previous page | Ctrl+PageUp |
 | Next page | Ctrl+PageDown |
-| Earlier pages list | Ctrl+Home |
-| Later pages list | Ctrl+End |
 | Search history | Alt+↓ |
 | Toggle search results panel | Alt+L |
 | Toggle match case | Alt+C |
 | Toggle whole word | Alt+W |
+| Toggle regular expression | Alt+R |
 | Switch to next tab | Ctrl+Tab |
 | Switch to previous tab | Ctrl+Shift+Tab |
 | Close tab | Ctrl+W |
@@ -98,7 +119,7 @@ Built with [GPUI](https://github.com/zed-industries/zed/tree/main/crates/gpui) �
 
 Zoom is gathered into a single button on the toolbar, showing the current state. The popup holds a magnification field above the three fit modes.
 
-- **Ctrl+E**, or clicking the button, opens it with the current mode already selected
+- **Ctrl+Q**, or clicking the button, opens it with the current mode already selected
 - Up and down cycle through the magnification field and the three modes; **Enter** applies, **Esc** closes without changing anything
 - **Ctrl+0**, **Ctrl+1** and **Ctrl+2** still switch modes directly, without opening the popup
 
@@ -108,7 +129,7 @@ The button shows the mode name while a fit mode is active, and the magnification
 
 Press **Ctrl+F** to open the search bar. Type to search, then press **F3** to jump to the next match or **Shift+F3** for the previous one. Press **Esc** to close the search bar.
 
-Available options: **Match case** and **Match whole word**.
+Available options: **Match case**, **Match whole word** and **Regular expression** (Alt+R). With **Regular expression** on, the text is searched as a regular expression, **Match case** still applies, and **Match whole word** is unavailable. If the text is not a valid expression, the search bar says so.
 
 The search starts from the page you are on and spreads outwards in both directions, so nearby matches are found first. The result list in the sidebar is always ordered by page.
 
@@ -162,6 +183,36 @@ The toolbar shows a list of recently opened files. The number of files retained 
 
 When **Open at the last page** is enabled in settings, opening a file from the recent list will jump directly to the page you were on last time.
 
+### Edit pages
+
+Ctrl+E (or the button next to Print) opens the page editor. Everything can also be done from the keyboard:
+
+| Action | Shortcut |
+|---|---|
+| Overwrite the open file | Ctrl+S |
+| Save as | Ctrl+Shift+S |
+| Insert a PDF | Insert |
+| Choose where to insert (before or after the selection) | Alt+I |
+| Combine PDFs | Ctrl+M |
+| Extract the selected pages | Ctrl+Shift+E |
+| Delete the selected pages | Delete |
+| Undo | Ctrl+Z |
+| Redo | Ctrl+Y or Ctrl+Shift+Z |
+| Select all pages | Ctrl+A |
+| Move the frame to a page (the selection does not change) | Arrow keys |
+| Select a range of pages | Shift+Arrow keys |
+| Add the page to the selection, or remove it | Space |
+| First / last page | Home / End |
+| One screen up / down | PageUp / PageDown |
+| Enlarge / shrink the thumbnails | Ctrl++ / Ctrl+- (or Ctrl+wheel) |
+| Open the file you just saved | Ctrl+O |
+| Show the shortcuts for this screen | F1 |
+| Close | Esc |
+
+The thumbnails can be enlarged up to one page per screen (the buttons at the top right, or the keys above), so you can see what is on each page. The size is not saved; it starts small each time.
+
+The page you were viewing is selected when the editor opens. Hover over a button to see its shortcut. F1 shows the list; choose a row and press Enter to run it.
+
 ### Settings
 
 Click **Settings** to open the settings panel.
@@ -178,6 +229,8 @@ Click **Settings** to open the settings panel.
 | File history count | How many files to keep in the history (1–100) |
 | Search history count | How many search terms to keep per document (1–100) |
 | Opening page | Start from the first page, or resume from the last viewed page |
+| When overwriting in page editing | Whether to keep the original as `name.bak.pdf` when saving over the open file |
+| Inversion strength | How strongly the colors are inverted (60–100%); shown only while inversion is on |
 | Scroll speed | How fast one wheel notch scrolls (see [Scrolling](#scrolling)) |
 | Scroll acceleration | How sharply the movement speeds up and slows down (see [Scrolling](#scrolling)) |
 | On battery | Choose whether to cap the frame rate at 30 FPS while on battery |
@@ -273,7 +326,7 @@ If you find a bug or have a question, please open an [Issue](https://github.com/
 ## Acknowledgements
 
 - [GPUI](https://github.com/zed-industries/zed/tree/main/crates/gpui) — Apache 2.0
-- [gpui-component](https://github.com/longbridge/gpui-component) — Apache 2.0
+- [GPUI Kit](https://github.com/longbridge/gpui-kit) (gpui-component) — Apache 2.0
 - [pdfium-render](https://github.com/ajrcarey/pdfium-render) — MIT / Apache 2.0
 
 ---
@@ -289,9 +342,11 @@ Windows向けのシンプルなPDFビューアです。
 
 ## 機能
 
+### v1.0.0
+
 - 連続スクロール表示・単一ページ表示の切り替え
 - 1ページ表示・見開き表示の切り替え
-- ズームイン・アウト（幅に合わせる・ページ全体・等倍）— ツールバーの1か所にまとめてあります
+- ズームイン・アウト（幅に合わせる・ページ全体・等倍）
 - ページの回転（時計回り・反時計回り）
 - テキスト検索（大文字小文字区別・単語一致オプション付き、Ctrl+F）
 - テキスト選択とコピー（Ctrl+C・右クリックメニュー）
@@ -303,12 +358,28 @@ Windows向けのシンプルなPDFビューアです。
 - 設定画面から表示言語を切り替え可能（日本語・英語）
 - 終了時のウィンドウ位置・サイズ・最大化状態を次回起動時に復元
 - GPUIによるGPU描画（GPU未搭載の場合はCPU描画で動作）
-- マルチタブ対応 — 複数のPDFを別々のタブで開ける
+- マルチタブ対応 — 複数のPDFを別々のタブで開けます
 - 設定画面から既定のPDFアプリとして登録可能
 - スクロールの速度と加減速度を調整可能
+- Ctrl+ホイールでズーム（カーソル位置を中心に拡大縮小）
+- PDF内のリンクをたどれます — ページ内リンクは移動先へ、Webのリンクは確認のうえブラウザで開きます
+- ステータスバーに表題・作者・作成日・ページ数・ファイルサイズ・PDFの版と、いま読んでいる章を表示
+
+### v1.1.0
+
+- 倍率ポップアップ — 幅・全体・等倍の選択と数値入力を、ツールバーの1か所にまとめてあります
 - 文書ごとの検索履歴
 - 文書ごとのブックマーク — ページに名前を付けて登録できます
 - 「ここまで読んだ」の記録 — 文書につき1つ。キー1つで記録し、キー1つで戻れます
+
+### v1.2.0
+
+- ページの色の反転（暗い場所での閲覧用、Ctrl+I）— 起動のたびに通常表示へ戻ります。強さ（60〜100%）は、反転しているときに設定画面のスライダーで決め、動かすと後ろのページにその場で反映されます
+- タブをドラッグして並べ替え
+- 正規表現での検索（Alt+R）— 検索バーのボタンで、入力した文字を正規表現として検索します
+- ページ編集（Ctrl+E、または印刷の隣のボタン）— 開いているPDFのページを、サムネイルで並べます。クリック・Shift+クリック（範囲）・Ctrl+クリック（飛び飛び）で選んで、抽出、削除、別のPDFの挿入（選んだページの前か後ろ）、PDFの結合ができます。PDFファイルを画面へドラッグすると、いちばん近いページの間へ挿入します。保存するまでは、作業中の並びだけが変わります（元に戻す・やり直し付き）。別のファイルへ保存するか、いまのファイルへ上書きできます（元のファイルは「名前.bak.pdf」として残せます。設定で切り替え）。保存したファイルでは、各ページの中身は残りますが、目次・ページラベル・文書のプロパティは引き継がれません。パスワードで開いたPDFと、作成者が編集を許可していないPDFでは、使えません
+- 専用の印刷画面で印刷（Ctrl+P）— 左に設定、右にスクロールで見られるプレビューを置き、各ページが用紙のどこに印刷されるかをそのまま確認できます。プリンター・部数・ページ（「1-3, 5」の形）を選び、用紙・向き・カラー・両面は、プリンター自身の「詳細設定」で選びます（プリンターごとに覚えます）。各ページは用紙に合わせて拡大縮小し、回転したページは回転したまま印刷します（色の反転は印刷には反映しません）。PostScriptを受けるプリンター（CubePDFなど）には、フォントごと送るので、文字の選択や検索ができるPDFになります（「Microsoft Print to PDF」では、Acrobatと同じく、文字は輪郭になります）
+- 開いているファイルが別のプログラムで書き換えられると知らせ、ボタンか Ctrl+Shift+R で読み直せます（見ているページ・倍率・回転・色の反転は保たれます）
 
 ## 開発言語・フレームワーク
 
@@ -335,12 +406,16 @@ Windows向けのシンプルなPDFビューアです。
 | 操作 | ショートカット |
 |---|---|
 | ファイルを開く | Ctrl+O |
+| 印刷する | Ctrl+P |
+| ページ編集 | Ctrl+E |
+| ファイルを読み直す | Ctrl+Shift+R |
 | ズームイン・アウト | Ctrl+= / Ctrl+- |
 | 幅に合わせる | Ctrl+1 |
 | ページ全体 | Ctrl+2 |
 | 等倍 | Ctrl+0 |
 | 時計回りに回転 | Ctrl+Shift++ |
 | 反時計回りに回転 | Ctrl+Shift+- |
+| ページの色を反転する | Ctrl+I |
 | 先頭ページ | Home |
 | 末尾ページ | End |
 | 前の表示へ | Alt+Left |
@@ -359,16 +434,15 @@ Windows向けのシンプルなPDFビューアです。
 | 次の一致へ | F3 |
 | 前の一致へ | Shift+F3 |
 | ページ番号入力欄へ移動 | Ctrl+G |
-| 倍率のポップアップを開く | Ctrl+E |
+| 倍率のポップアップを開く | Ctrl+Q |
 | キーの一覧を開く | F1 |
 | 前のページ | Ctrl+PageUp |
 | 次のページ | Ctrl+PageDown |
-| 前側のページリスト | Ctrl+Home |
-| 後ろ側のページリスト | Ctrl+End |
 | 検索履歴 | Alt+↓ |
 | 検索結果パネルの開閉 | Alt+L |
 | 大文字小文字を区別の切り替え | Alt+C |
 | 単語単位の切り替え | Alt+W |
+| 正規表現の切り替え | Alt+R |
 | 次のタブへ切り替え | Ctrl+Tab |
 | 前のタブへ切り替え | Ctrl+Shift+Tab |
 | タブを閉じる | Ctrl+W |
@@ -378,7 +452,7 @@ Windows向けのシンプルなPDFビューアです。
 
 倍率の操作はツールバーの1つのボタンにまとめてあり、ボタンにはいまの状態が出ます。ポップアップには倍率の入力欄と、その下に3つのモードが並びます。
 
-- **Ctrl+E**、またはボタンを押すと開きます。いまのモードが選ばれた状態です
+- **Ctrl+Q**、またはボタンを押すと開きます。いまのモードが選ばれた状態です
 - 上下キーで入力欄と3つのモードを巡回します。**Enter** で確定、**Esc** は何も変えずに閉じます
 - **Ctrl+0**・**Ctrl+1**・**Ctrl+2** はポップアップを開かずに直接切り替えます
 
@@ -388,7 +462,9 @@ Windows向けのシンプルなPDFビューアです。
 
 **Ctrl+F** で検索バーを開きます。文字を入力して **F3** で次の一致へ、**Shift+F3** で前の一致へ移動します。**Esc** で検索バーを閉じます。
 
-オプション：**大文字小文字を区別する**・**単語として一致するものだけを探す**
+オプション：**大文字小文字を区別する**・**単語として一致するものだけを探す**・**正規表現**（Alt+R）
+
+**正規表現**をオンにすると、入力した文字を正規表現として検索します。**大文字小文字を区別する**はそのまま使えますが、**単語として一致するものだけを探す**は使えなくなります。正規表現として正しくない文字のときは、検索バーで知らせます。
 
 検索はいま見ているページを起点に前後へ広がるので、近くの一致から先に見つかります。サイドバーの結果一覧は常にページ順です。
 
@@ -442,6 +518,36 @@ Enterキーを押さなくても検索は始まります。**F3**・**Shift+F3**
 
 設定で**前回のページから開く**を有効にすると、履歴からファイルを開いたときに前回見ていたページへ自動で移動します。
 
+### ページ編集
+
+Ctrl+E（または印刷の隣のボタン）でページ編集を開きます。操作は、すべてキーボードでもできます。
+
+| 操作 | キー |
+|---|---|
+| 開いているファイルへ上書き保存 | Ctrl+S |
+| 別名で保存 | Ctrl+Shift+S |
+| PDFを挿入 | Insert |
+| 挿入位置（選択の前・後ろ）を選ぶ | Alt+I |
+| PDFを結合 | Ctrl+M |
+| 選んだページを抽出 | Ctrl+Shift+E |
+| 選んだページを削除 | Delete |
+| 元に戻す | Ctrl+Z |
+| やり直し | Ctrl+Y または Ctrl+Shift+Z |
+| すべてのページを選択 | Ctrl+A |
+| ページへ枠を動かす（選択は変わりません） | 矢印キー |
+| 範囲を選ぶ | Shift+矢印キー |
+| そのページを、選択に入れる・外す | Space |
+| 先頭・最後のページへ | Home / End |
+| 1画面ぶん上・下へ | PageUp / PageDown |
+| サムネイルを拡大・縮小 | Ctrl++ / Ctrl+-（または Ctrl+ホイール） |
+| 保存したファイルを開く | Ctrl+O |
+| この画面のキーの一覧を開く | F1 |
+| 閉じる | Esc |
+
+サムネイルは、1ページが画面いっぱいになるまで拡大できます（右上のボタン、または上のキー）。各ページの中身を確かめながら選べます。大きさは保存せず、開くたびに小さい状態から始まります。
+
+開いたときは、メイン画面で見ていたページが選ばれた状態になります。ボタンにマウスを重ねると、キーが表示されます。F1 で一覧を出し、行を選んで Enter を押すと、その操作を実行します。
+
 ### 設定
 
 **設定**ボタンをクリックすると設定パネルが開きます。
@@ -458,6 +564,8 @@ Enterキーを押さなくても検索は始まります。**F3**・**Shift+F3**
 | ファイル表示履歴数 | 履歴に保持するファイル数（1〜100件） |
 | 検索履歴数 | 1つの文書で保持する検索語の数（1〜100件） |
 | 開くページ | 先頭ページから、または前回見ていたページから開く |
+| ページ編集で上書き保存するとき | 開いているファイルへ上書きするとき、元のファイルを「名前.bak.pdf」として残すか |
+| 反転の強さ | 色を反転する強さ（60〜100%）。反転しているときだけ表示 |
 | スクロール速度 | ホイール1ノッチ分の移動の速さ（[スクロール](#スクロール)を参照） |
 | スクロール加減速度 | 動き出しと止まりぎわの鋭さ（[スクロール](#スクロール)を参照） |
 | バッテリー動作時 | バッテリー動作中にフレームレートを30FPSに制限するか選べる |
@@ -553,5 +661,5 @@ Copyright 2026 nabehiro
 ## 使用ライブラリ
 
 - [GPUI](https://github.com/zed-industries/zed/tree/main/crates/gpui) — Apache 2.0
-- [gpui-component](https://github.com/longbridge/gpui-component) — Apache 2.0
+- [GPUI Kit](https://github.com/longbridge/gpui-kit) (gpui-component) — Apache 2.0
 - [pdfium-render](https://github.com/ajrcarey/pdfium-render) — MIT / Apache 2.0

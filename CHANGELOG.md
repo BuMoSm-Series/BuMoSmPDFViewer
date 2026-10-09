@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.2.0] - 2026-10-09
+
+### Added
+
+- **Page editor** — Ctrl+E (or the button next to Print) opens a page editor: arrange the pages as thumbnails, then extract, delete, insert pages from another PDF (before or after the selection), or combine PDFs. Undo / redo are supported, and dropping a PDF onto the screen inserts it between the nearest pages. Save as a new file or overwrite the open one (the original can be kept as `name.bak.pdf`; configurable in settings). Every operation is also available from the keyboard, and F1 shows the list for this screen. Thumbnails can be enlarged up to one page per screen (buttons at the top right, Ctrl++ / Ctrl+-, or Ctrl+wheel). The table of contents, page labels and document properties are not carried over to the saved file; password-protected PDFs and PDFs that do not allow editing cannot be edited
+- **Print screen** — Ctrl+P opens a dedicated print screen with settings on the left and a scrollable preview on the right showing where each page lands on the paper. Choose the printer, copies and pages (e.g. "1-3, 5"); paper size, orientation, color and duplex are set in the printer's own advanced settings (remembered per printer). Pages are scaled to fit the paper, and rotated pages print rotated. Printers that accept PostScript (such as CubePDF) receive the fonts, so the result keeps selectable, searchable text
+- **Invert colors** — Ctrl+I inverts the page colors for reading in the dark; the display returns to normal on every launch. The strength (60–100%) is set with a slider in settings while inverted, and the page behind updates live
+- **File change notice** — when the open file is rewritten by another program, a notice appears; reload with the button or Ctrl+Shift+R (page, zoom, rotation and inversion are kept)
+- **Tab reordering** — drag a tab to change its position
+- **Regular-expression search** — the new button in the search bar (or Alt+R) treats the search text as a regular expression. Match case still applies; while it is on, "Match whole word" is unavailable. A text that is not a valid expression is reported in the search bar
+
+### Improved
+
+- **Page navigation** — simplified to first / previous / next / last page buttons
+- **Selected toolbar buttons** — the icon color now follows the theme (`link` key)
+- **Page frame / border** — the color is chosen automatically to stay visible on any theme
+
+### Changed
+
+- The zoom popup shortcut moved from Ctrl+E to **Ctrl+Q** (Ctrl+E now opens the page editor). The popup can still be opened with its button
+
+---
+
 ## [1.1.0] - 2026-09-22
 
 ### Added
@@ -58,6 +81,29 @@ Initial release.
 ---
 
 # 更新履歴
+
+## [1.2.0] - 2026-10-09
+
+### 追加
+
+- **ページ編集** — Ctrl+E（または印刷の隣のボタン）でページ編集を開きます。ページをサムネイルで並べ、抽出・削除・別のPDFの挿入（選択の前か後ろ）・PDFの結合ができます。元に戻す・やり直しに対応し、PDFファイルを画面へドラッグすると、いちばん近いページの間へ挿入します。別のファイルへ保存するか、いま開いているファイルへ上書きできます（元のファイルは「名前.bak.pdf」として残せます。設定で切り替え）。すべての操作をキーボードでも行え、F1 でこの画面のキーの一覧を開けます。サムネイルは、1ページが画面いっぱいになるまで拡大できます（右上のボタン、Ctrl++ / Ctrl+-、Ctrl+ホイール）。保存したファイルでは、目次・ページラベル・文書のプロパティは引き継がれません。パスワードで開いたPDFと、作成者が編集を許可していないPDFは編集できません
+- **印刷画面** — Ctrl+P で専用の印刷画面を開きます。左に設定、右にスクロールで見られるプレビューを置き、各ページが用紙のどこに印刷されるかをそのまま確認できます。プリンター・部数・ページ（「1-3, 5」の形）を選び、用紙・向き・カラー・両面は、プリンター自身の「詳細設定」で選びます（プリンターごとに覚えます）。各ページは用紙に合わせて拡大縮小し、回転したページは回転したまま印刷します。PostScriptを受けるプリンター（CubePDFなど）には、フォントごと送るので、文字の選択や検索ができるPDFになります
+- **色の反転** — Ctrl+I でページの色を反転し、暗い場所でも読みやすくします。起動のたびに通常表示へ戻ります。強さ（60〜100%）は、反転しているときに設定画面のスライダーで決め、動かすと後ろのページにその場で反映されます
+- **ファイル変更の通知** — 開いているファイルが別のプログラムで書き換えられると知らせます。ボタンか Ctrl+Shift+R で読み直せます（見ているページ・倍率・回転・色の反転は保たれます）
+- **タブの並べ替え** — タブをドラッグして並べ替えられます
+- **正規表現での検索** — 検索バーの新しいボタン（または Alt+R）で、入力した文字を正規表現として検索します。大文字小文字の区別は、そのまま使えます。オンの間は「単語単位」は使えません。正規表現として正しくない文字を入れたときは、検索バーで知らせます
+
+### 改善
+
+- **ページ移動** — 先頭・前・次・末尾ページのボタンに整理しました
+- **選択中のツールバーボタン** — アイコンの色がテーマ（`link` キー）に従うようになりました
+- **ページの枠線** — どのテーマでも見えるよう、色を自動で決めます
+
+### 変更
+
+- 倍率ポップアップのキーを Ctrl+E から **Ctrl+Q** に変更しました（Ctrl+E はページ編集を開きます）。ポップアップはボタンからも開けます
+
+---
 
 ## [1.1.0] - 2026-09-22
 
