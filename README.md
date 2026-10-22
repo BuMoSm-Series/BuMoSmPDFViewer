@@ -48,6 +48,14 @@ Built with [GPUI](https://github.com/zed-industries/zed/tree/main/crates/gpui) �
 - Print with a built-in print screen (Ctrl+P) — settings on the left, a scrollable preview on the right that shows each page on the paper exactly where it will be printed. Choose the printer, copies and pages ("1-3, 5"); paper, orientation, color and two-sided printing are set in the printer's own Preferences window and remembered per printer. Each page is fitted to the paper, a page you rotated stays rotated, and colors are never inverted on paper. Printers that accept PostScript (for example CubePDF) receive the page with its fonts, so printing to them keeps the text selectable and searchable; with "Microsoft Print to PDF" the text becomes outlines, as with Acrobat
 - Notice when the open file is changed by another program — reload with one click or Ctrl+Shift+R; your page, zoom, rotation and color inversion are kept
 
+### v1.3.0
+
+- Installer — the app is now distributed as an installer as well as a zip (see [Installation](#installation))
+- Shows the version of the `pdfium.dll` in use, in Settings
+- Settings are grouped into collapsible sections (Display, History, Behavior, Other), all closed by default
+- The mouse pointer shows the busy cursor while printing, and while the page editor is saving or loading a PDF to insert
+- The frame around the window follows the theme's `window.border` color (Windows 11)
+
 ## Built With
 
 - [Rust](https://www.rust-lang.org/) — systems programming language
@@ -59,6 +67,15 @@ Built with [GPUI](https://github.com/zed-industries/zed/tree/main/crates/gpui) �
 - Windows 10 or later
 - `pdfium.dll` placed in the same folder as the executable
 - No additional runtime or GPU required
+
+## Installation
+
+Two packages are provided, with the same contents.
+
+- **Installer** (`BuMoSmPDFViewer-Setup-<version>.exe`) — installs to `%LOCALAPPDATA%\Programs\BuMoSm\BuMoSmPDFViewer`. No administrator rights are needed. During setup you can also choose to add a desktop icon, and to register the app as a PDF app (the Windows default apps settings open when setup finishes). Running a newer installer updates the app in place and keeps your `config.json`. A running copy is closed first.
+- **Zip** (`BuMoSmPDFViewer-<version>.zip`) — extract it to a folder you can write to and run `BuMoSmPDFViewer.exe`. Settings are saved in `config.json` next to the executable, so avoid folders such as `C:\Program Files`.
+
+To uninstall, use Windows Settings → Apps. **Uninstalling deletes everything in the install folder, including `config.json` (settings, history, bookmarks) and any theme files you added to the `themes` folder. Copy them somewhere else first if you want to keep them.** The registry entries for the default PDF app are removed as well.
 
 ## Usage
 
@@ -217,6 +234,8 @@ The page you were viewing is selected when the editor opens. Hover over a button
 
 Click **Settings** to open the settings panel.
 
+The settings are grouped into four collapsible sections — **Display**, **History**, **Behavior** and **Other**. All of them are closed when the panel opens; click a heading to open or close it.
+
 | Setting | Description |
 |---|---|
 | Language | Display language |
@@ -235,6 +254,7 @@ Click **Settings** to open the settings panel.
 | Scroll acceleration | How sharply the movement speeds up and slows down (see [Scrolling](#scrolling)) |
 | On battery | Choose whether to cap the frame rate at 30 FPS while on battery |
 | Set as default PDF app | Opens the Windows default apps settings page for this application |
+| PDFium version | Shows the version of the `pdfium.dll` in use (read-only) |
 
 ### Scrolling
 
@@ -291,6 +311,10 @@ The color scheme is selected under **Theme** in the settings panel. The list is 
 
 Themes in the second group are plain JSON files. Editing one takes effect immediately, without restarting the application. See `README_en.txt` in the `themes` folder for the file format and the list of available color keys.
 
+The bundled `dark.json` and `light.json` are samples. They are restored to their original content when the application is updated. To make changes, copy them under a different name and also change the `"name"` inside.
+
+The frame around the window follows the theme's `window.border` color (Windows 11 only). If a theme does not set it, the `border` color is used.
+
 ### Settings file
 
 Settings are saved automatically to `config.json` in the same folder as the executable. The window position, size, maximized state and the monitor in use are stored in the same file. You can copy or back up this file to preserve your configuration.
@@ -321,7 +345,9 @@ The author is not responsible for any damages or issues arising from its use.
 
 ## Contributing / Bug Reports
 
-If you find a bug or have a question, please open an [Issue](https://github.com/BuMoSm-Series/BuMoSmPDFViewer/issues).
+If you find a bug or have a question, please email [bumosm.support@gmail.com](mailto:bumosm.support@gmail.com).
+
+For development-related matters, you can also open an [Issue](https://github.com/BuMoSm-Series/BuMoSmPDFViewer/issues) on GitHub.
 
 ## Acknowledgements
 
@@ -381,6 +407,14 @@ Windows向けのシンプルなPDFビューアです。
 - 専用の印刷画面で印刷（Ctrl+P）— 左に設定、右にスクロールで見られるプレビューを置き、各ページが用紙のどこに印刷されるかをそのまま確認できます。プリンター・部数・ページ（「1-3, 5」の形）を選び、用紙・向き・カラー・両面は、プリンター自身の「詳細設定」で選びます（プリンターごとに覚えます）。各ページは用紙に合わせて拡大縮小し、回転したページは回転したまま印刷します（色の反転は印刷には反映しません）。PostScriptを受けるプリンター（CubePDFなど）には、フォントごと送るので、文字の選択や検索ができるPDFになります（「Microsoft Print to PDF」では、Acrobatと同じく、文字は輪郭になります）
 - 開いているファイルが別のプログラムで書き換えられると知らせ、ボタンか Ctrl+Shift+R で読み直せます（見ているページ・倍率・回転・色の反転は保たれます）
 
+### v1.3.0
+
+- インストーラ — zip に加えて、インストーラでも配布します（[インストール](#インストール)を参照）
+- 使っている `pdfium.dll` のバージョンを、設定で確認できます
+- 設定を、項目別の折りたたみ（表示・履歴・動作・その他）にまとめました。開いたときは、すべて閉じています
+- 印刷中と、ページ編集の保存中・挿入するPDFの読み込み中に、マウスポインターを「待ち」の形にします
+- ウィンドウの外周の枠線が、テーマの `window.border` の色になります（Windows 11）
+
 ## 開発言語・フレームワーク
 
 - [Rust](https://www.rust-lang.org/) — システムプログラミング言語
@@ -392,6 +426,15 @@ Windows向けのシンプルなPDFビューアです。
 - Windows 10 以降
 - 実行ファイルと同じフォルダに `pdfium.dll` が必要
 - 追加のランタイムやGPUは不要
+
+## インストール
+
+配布は2種類で、中身は同じです。
+
+- **インストーラ**（`BuMoSmPDFViewer-Setup-<バージョン>.exe`）— `%LOCALAPPDATA%\Programs\BuMoSm\BuMoSmPDFViewer` へインストールします。管理者権限は要りません。インストール時に、デスクトップのアイコンと、PDFアプリとしての登録（完了後にWindowsの既定アプリの設定画面が開きます）を選べます。新しいインストーラを実行すると、そのまま上書き更新され、`config.json` は残ります。起動中のアプリは、先に閉じられます。
+- **zip**（`BuMoSmPDFViewer-<バージョン>.zip`）— 書き込めるフォルダへ展開し、`BuMoSmPDFViewer.exe` を実行します。設定は実行ファイルの隣の `config.json` に保存されるので、`C:\Program Files` などは避けてください。
+
+アンインストールは、Windowsの「設定」→「アプリ」から行います。**アンインストールすると、インストール先のフォルダの中身がすべて消えます。`config.json`（設定・履歴・ブックマーク）と、`themes` フォルダに自分で足したテーマのファイルも含まれるので、残したいときは先に別の場所へコピーしてください。** 既定のPDFアプリのために書いたレジストリも消えます。
 
 ## 使い方
 
@@ -552,6 +595,8 @@ Ctrl+E（または印刷の隣のボタン）でページ編集を開きます�
 
 **設定**ボタンをクリックすると設定パネルが開きます。
 
+設定は、**表示**・**履歴**・**動作**・**その他**の4つの折りたたみにまとめてあります。パネルを開いたときは、すべて閉じています。見出しをクリックすると開閉します。
+
 | 設定項目 | 説明 |
 |---|---|
 | 言語 | 表示言語 |
@@ -570,6 +615,7 @@ Ctrl+E（または印刷の隣のボタン）でページ編集を開きます�
 | スクロール加減速度 | 動き出しと止まりぎわの鋭さ（[スクロール](#スクロール)を参照） |
 | バッテリー動作時 | バッテリー動作中にフレームレートを30FPSに制限するか選べる |
 | 既定のPDFアプリに設定する | Windowsの既定アプリ設定画面をこのアプリのページで開く |
+| PDFiumのバージョン | 使っている `pdfium.dll` のバージョンを表示（読み取り専用） |
 
 ### スクロール
 
@@ -626,6 +672,10 @@ Windowsの仕様上、アプリが自分で既定を切り替えることはで�
 
 後者は普通の JSON ファイルです。書き換えると再起動せずにその場で反映されます。ファイルの書き方と指定できる色の一覧は、`themes` フォルダの `README_ja.txt` を参照してください。
 
+同梱の `dark.json` と `light.json` は見本です。アプリを更新すると元の内容に戻ります。変更したいときは別の名前でコピーし、中の `"name"` も変えてください。
+
+ウィンドウの外周の枠線は、テーマの `window.border` の色になります（Windows 11 のみ）。テーマで指定がないときは、`border` の色になります。
+
 ### 設定ファイル
 
 設定は実行ファイルと同じフォルダの `config.json` に自動保存されます。ウィンドウの位置・サイズ・最大化状態・表示していたモニターも同じファイルに保存されます。このファイルをコピーまたはバックアップすることで設定を保持できます。
@@ -656,7 +706,9 @@ Copyright 2026 nabehiro
 
 ## バグ報告・質問
 
-バグの報告や質問は [Issues](https://github.com/BuMoSm-Series/BuMoSmPDFViewer/issues) からお願いします。
+バグの報告や質問は、メール [bumosm.support@gmail.com](mailto:bumosm.support@gmail.com) までお願いします。
+
+開発に関わることは、GitHub の [Issues](https://github.com/BuMoSm-Series/BuMoSmPDFViewer/issues) からも受け付けています。
 
 ## 使用ライブラリ
 

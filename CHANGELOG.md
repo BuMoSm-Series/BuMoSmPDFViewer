@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.3.0] - 2026-10-22
+
+### Added
+
+- **PDFium version** — Settings now shows the version of the `pdfium.dll` in use (under "Other")
+- **Installer** — the app is now distributed as an installer (`BuMoSmPDFViewer-Setup-<version>.exe`) as well as a zip. No administrator rights are needed; a desktop icon and registration as a PDF app can be chosen during setup. Uninstalling deletes everything in the install folder, including `config.json` and any theme files you added, so copy them elsewhere first if you want to keep them
+
+### Improved
+
+- **Wait cursor** — the mouse pointer now shows the "busy" cursor while printing, while the page editor is saving, and while it is loading a PDF to insert
+- **Settings** — the settings are grouped into collapsible sections (Display, History, Behavior, Other), all closed by default
+- **Window frame** — the frame around the window now follows the `window.border` color of the theme (Windows 11). If a theme does not set it, the `border` color is used
+
+### Changed
+
+- The colors of the bundled dark theme are refreshed
+
+### Fixed
+
+- Message boxes now open centered on the app window, on the same monitor. Previously, with the app on a secondary monitor, a message box could appear oversized on the main monitor
+
+---
+
 ## [1.2.0] - 2026-10-09
 
 ### Added
@@ -81,6 +104,29 @@ Initial release.
 ---
 
 # 更新履歴
+
+## [1.3.0] - 2026-10-22
+
+### 追加
+
+- **PDFiumのバージョン表示** — 設定の「その他」に、使っている `pdfium.dll` のバージョンを表示します
+- **インストーラ** — zip に加えて、インストーラ（`BuMoSmPDFViewer-Setup-<バージョン>.exe`）でも配布します。管理者権限は不要で、デスクトップのアイコンと、PDFアプリとしての登録を、インストール時に選べます。アンインストールすると、インストール先のフォルダの中身がすべて消えます。`config.json` と、自分で足したテーマのファイルも含まれるので、残したいときは先に別の場所へコピーしてください
+
+### 改善
+
+- **待ちのカーソル** — 印刷中、ページ編集の保存中、ページ編集で挿入するPDFの読み込み中に、マウスポインターを「待ち」の形にします
+- **設定** — 設定を、項目別の折りたたみ（表示・履歴・動作・その他）にまとめました。開いたときは、すべて閉じています
+- **ウィンドウの枠線** — ウィンドウの外周の枠線が、テーマの `window.border` の色になりました（Windows 11）。テーマで指定がないときは、`border` の色になります
+
+### 変更
+
+- 同梱のダークテーマの配色を一新しました
+
+### 修正
+
+- メッセージボックスが、アプリのウィンドウの中央に、同じモニターで開くようになりました。以前は、アプリをサブモニターに置いていると、メインモニターに大きすぎる大きさで出ることがありました
+
+---
 
 ## [1.2.0] - 2026-10-09
 
